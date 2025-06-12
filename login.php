@@ -46,6 +46,16 @@
       box-shadow: 0 0 0 0.2rem rgba(147, 232, 190, 0.25);
     }
 
+    .error-border {
+      border-color: red !important;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 0.875rem;
+      display: none;
+    }
+
     label {
       color: #808080;
     }
@@ -57,14 +67,17 @@
   <div class="form-container w-100" style="max-width: 400px;">
     <h3 class="text-center text-theme mb-4" style="font-size: 36px;">Login</h3>
     <form id="loginForm" onsubmit="return validateLogin()">
+
       <div class="mb-3">
         <label for="loginEmail" class="form-label">Email</label>
-        <input type="email" class="form-control" id="loginEmail" required>
+        <input type="email" class="form-control" id="loginEmail">
+        <div id="emailError" class="error-message">Please enter a valid email.</div>
       </div>
 
       <div class="mb-3">
         <label for="loginPassword" class="form-label">Password</label>
-        <input type="password" class="form-control" id="loginPassword" required>
+        <input type="password" class="form-control" id="loginPassword">
+        <div id="passwordError" class="error-message">Password is required.</div>
       </div>
 
       <button type="submit" class="btn btn-theme w-100">Login</button>
@@ -78,15 +91,35 @@
 
 <script>
   function validateLogin() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
+    const email = document.getElementById('loginEmail');
+    const password = document.getElementById('loginPassword');
 
-    if (!email || !password) {
-      alert("Please fill all fields.");
-      return false;
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    // Reset previous states
+    [email, password].forEach(input => input.classList.remove('error-border'));
+    [emailError, passwordError].forEach(el => el.style.display = 'none');
+
+    let isValid = true;
+
+    // Email validation
+    const emailVal = email.value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailVal || !emailRegex.test(emailVal)) {
+      email.classList.add('error-border');
+      emailError.style.display = 'block';
+      isValid = false;
     }
 
-    return true;
+    // Password validation
+    if (password.value.trim() === '') {
+      password.classList.add('error-border');
+      passwordError.style.display = 'block';
+      isValid = false;
+    }
+
+    return isValid;
   }
 </script>
 </body>
